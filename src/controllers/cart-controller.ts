@@ -52,6 +52,35 @@ class CartController {
 			res.status(500).json({ message: 'Internal server error' });
 		}
 	}
+
+	async getCart(req: Request, res: Response) {
+		try {
+			const userId = req.headers['user-id'] as string;
+			if (!userId) {
+				return res.status(401).json({ message: 'Unauthorized: User ID is required' });
+			}
+
+			let cart = (await database.findBy<Cart>(DatabaseCollections.CART, cart => cart.userId === userId))[0];
+			if (!cart) {
+				return res.status(404).json({ message: 'Cart not found' });
+			}
+
+			cart.items = await Promise.all(
+				cart.items.map(async item => {
+					const product = await database.findById<Product>(DatabaseCollections.PRODUCTS, item.productId);
+					return product ? {
+						...item,
+						product
+					} : { ...item, product: {} }
+				})
+			)
+
+			res.status(200).json(cart);
+		} catch (error) {
+			console.error('Error retrieving cart:', error);
+			res.status(500).json({ message: 'Internal server error' });
+		}
+	}
 }
 
 export const cartController = new CartController();

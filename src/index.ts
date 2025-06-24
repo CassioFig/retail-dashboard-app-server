@@ -36,6 +36,10 @@ app.post('/carts', async (req, res) => {
   await cartController.addToCart(req, res);
 });
 
+app.get('/carts', async (req, res) => {
+  await cartController.getCart(req, res);
+});
+
 async function startServer() {
   try {
     await seedDatabase();
