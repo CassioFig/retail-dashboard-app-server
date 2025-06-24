@@ -12,7 +12,7 @@ class UserController {
 				return res.status(400).json({ message: 'User with this email already exists' });
 			}
 
-			const user = await database.create(DatabaseCollections.USERS, { ...body, id: cuid() });
+			const user = await database.create(DatabaseCollections.USERS, { ...body, id: cuid(), isAdmin: false });
 			const { password, ...userWithouPassword } = user;
 			res.status(201).json(userWithouPassword);
 		} catch (error) {
