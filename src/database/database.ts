@@ -40,7 +40,6 @@ export class JsonDatabase {
   private async writeCollection<T>(collection: DatabaseCollections, data: T[]): Promise<void> {
     await this.ensureDbDirectory();
     const filePath = this.getFilePath(collection);
-    console.log(`Writing to ${filePath}`);
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
   }
 

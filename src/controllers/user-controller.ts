@@ -14,7 +14,7 @@ class UserController {
 
 			const user = await database.create(DatabaseCollections.USERS, { ...body, id: cuid() });
 			const { password, ...userWithouPassword } = user;
-			res.status(201).json({ message: 'User created successfully', userWithouPassword });
+			res.status(201).json(userWithouPassword);
 		} catch (error) {
 			console.error('Error signing up user:', error);
 			res.status(500).json({ message: 'Internal server error' });
@@ -31,7 +31,7 @@ class UserController {
 			}
 
 			const { password: _, ...userWithoutPassword } = user[0];
-			res.status(200).json({ message: 'Login successful', userWithoutPassword });
+			res.status(200).json(userWithoutPassword);
 		} catch (error) {
 			console.error('Error logging in user:', error);
 			res.status(500).json({ message: 'Internal server error' });
