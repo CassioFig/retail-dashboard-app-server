@@ -1,6 +1,6 @@
 import express from 'express';
 import { User } from './models';
-import { productController, userController } from './controllers';
+import { cartController, productController, userController } from './controllers';
 import { seedDatabase } from './database/seed';
 
 const app = express();
@@ -29,6 +29,11 @@ app.post('/auth/login', async (req, res) => {
 // Products
 app.get('/products', async (req, res) => {
   await productController.getProducts(req, res);
+});
+
+// Cart
+app.post('/carts', async (req, res) => {
+  await cartController.addToCart(req, res);
 });
 
 async function startServer() {

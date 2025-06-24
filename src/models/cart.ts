@@ -1,4 +1,5 @@
 export class Cart {
+	id: string;
 	userId: string;
 	items: CartItem[];
 	totalItemCount: number;
