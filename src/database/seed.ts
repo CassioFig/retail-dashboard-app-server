@@ -1,6 +1,7 @@
 import { database, DatabaseCollections } from './database';
 import { Product } from '../models/product';
 import cuid from 'cuid';
+import { User } from '../models';
 
 export async function seedDatabase(): Promise<void> {
 	const productsCount = await database.count(DatabaseCollections.PRODUCTS);
@@ -10,8 +11,8 @@ export async function seedDatabase(): Promise<void> {
 		return;
 	}
 
-	const getAverage = () => Math.round((Math.random() * 2 + 3) * 10) / 10;
-	const getCount = () => Math.floor(Math.random() * 100);
+	const getAverage = () => 0;
+	const getCount = () => 0;
 	
 	const seedProducts: Product[] = [
 		{
@@ -136,8 +137,23 @@ export async function seedDatabase(): Promise<void> {
 		}
 	];
 
+	const seedUsers: User[] = [
+		{
+			id: cuid(),
+			firstName: "Admin",
+			lastName: "Root",
+			email: "admin@example.com",
+			password: "123",
+			isAdmin: true,
+		}
+	];
+
 	for (const product of seedProducts) {
 		await database.create(DatabaseCollections.PRODUCTS, product);
+	}
+
+	for (const user of seedUsers) {
+		await database.create(DatabaseCollections.USERS, user);
 	}
 	console.log('Dados iniciais inseridos com sucesso!');
 }
