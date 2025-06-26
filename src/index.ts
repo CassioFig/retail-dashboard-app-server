@@ -42,6 +42,10 @@ app.get('/carts', async (req, res) => {
   await cartController.getCart(req, res);
 });
 
+app.delete('/carts/product/:id', async (req, res) => {
+  await cartController.removeFromCart(req, res);
+});
+
 async function startServer() {
   try {
     await seedDatabase();

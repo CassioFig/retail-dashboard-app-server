@@ -46,6 +46,18 @@ class CartController {
 			productStock.stock -= quantity;
 			await database.update<Product>(DatabaseCollections.PRODUCTS, productId, productStock);
 
+			if (updatedCart) {
+				updatedCart.items = await Promise.all(
+					cart.items.map(async item => {
+						const product = await database.findById<Product>(DatabaseCollections.PRODUCTS, item.productId);
+						return product ? {
+							...item,
+							product
+						} : { ...item, product: {} }
+					})
+				)
+			}
+
 			res.status(201).json(updatedCart);
 		} catch (error) {
 			console.error('Error adding to cart:', error);
@@ -78,6 +90,58 @@ class CartController {
 			res.status(200).json(cart);
 		} catch (error) {
 			console.error('Error retrieving cart:', error);
+			res.status(500).json({ message: 'Internal server error' });
+		}
+	}
+
+	async removeFromCart(req: Request, res: Response) {
+		try {
+			const userId = req.headers['user-id'] as string;
+			if (!userId) {
+				return res.status(401).json({ message: 'Unauthorized: User ID is required' });
+			}
+
+			const { id: productId } = req.params as { id: string };
+			if (!productId) {
+				return res.status(400).json({ message: 'Product ID is required' });
+			}
+
+			let cart = (await database.findBy<Cart>(DatabaseCollections.CART, cart => cart.userId === userId))[0];
+			if (!cart) {
+				return res.status(404).json({ message: 'Cart not found' });
+			}
+
+			const itemIndex = cart.items.findIndex(item => item.productId === productId);
+			if (itemIndex === -1) {
+				return res.status(404).json({ message: 'Item not found in cart' });
+			}
+
+			const removedItem = cart.items[itemIndex];
+			cart.items.splice(itemIndex, 1);
+			cart.totalItemCount -= removedItem.quantity;
+			cart.totalAmount -= removedItem.price * removedItem.quantity;
+
+			await database.update<Cart>(DatabaseCollections.CART, cart.id, cart);
+
+			const productStock = await database.findById<Product>(DatabaseCollections.PRODUCTS, productId);
+			if (productStock) {
+				productStock.stock += removedItem.quantity;
+				await database.update<Product>(DatabaseCollections.PRODUCTS, productId, productStock);
+			}
+
+			cart.items = await Promise.all(
+				cart.items.map(async item => {
+					const product = await database.findById<Product>(DatabaseCollections.PRODUCTS, item.productId);
+					return product ? {
+						...item,
+						product
+					} : { ...item, product: {} }
+				})
+			)
+
+			res.status(200).json(cart);
+		} catch (error) {
+			console.error('Error removing from cart:', error);
 			res.status(500).json({ message: 'Internal server error' });
 		}
 	}
