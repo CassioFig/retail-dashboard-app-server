@@ -3,5 +3,6 @@ export class Review {
 	userId: string;
 	productId: string;
 	rating: number;
-	comment?: string;
+	comment: string;
+	createdAt: Date;
 }

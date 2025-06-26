@@ -1,11 +1,13 @@
 import express from 'express';
+import cors from 'cors';
 import { User } from './models';
 import { cartController, productController, userController } from './controllers';
 import { seedDatabase } from './database/seed';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
+app.use(cors());
 app.use(express.json());
 app.use('/images', express.static('public/images'));
 
@@ -22,7 +24,7 @@ app.post('/auth/signup', async (req, res) => {
   await userController.signUp(req, res);
 });
 
-app.post('/auth/login', async (req, res) => {
+app.post('/auth/signin', async (req, res) => {
   await userController.login(req, res);
 });
 
