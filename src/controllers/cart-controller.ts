@@ -40,7 +40,7 @@ class CartController {
 			}
 
 			cart.totalItemCount = cart.items.reduce((total, item) => total + item.quantity, 0);
-			cart.totalAmount = cart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+			cart.totalAmount = parseFloat(cart.items.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2));
 
 			const updatedCart = await database.update<Cart>(DatabaseCollections.CART, cart.id, cart);
 			productStock.stock -= quantity;
