@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { User } from './models';
-import { cartController, productController, userController } from './controllers';
+import { cartController, productController, reviewController, userController } from './controllers';
 import { seedDatabase } from './database/seed';
 
 const app = express();
@@ -44,6 +44,15 @@ app.get('/carts', async (req, res) => {
 
 app.delete('/carts/product/:id', async (req, res) => {
   await cartController.removeFromCart(req, res);
+});
+
+// Review
+app.post('/reviews', async (req, res) => {
+  await reviewController.addReview(req, res);
+});
+
+app.get('/reviews/product/:productId', async (req, res) => {
+  await reviewController.getReviewsByProduct(req, res);
 });
 
 async function startServer() {

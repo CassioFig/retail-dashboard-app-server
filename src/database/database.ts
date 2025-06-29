@@ -6,6 +6,7 @@ export enum DatabaseCollections {
 	PRODUCTS = 'products',
 	ORDERS = 'orders',
 	CART = 'cart',
+  REVIEWS = 'reviews',
 }
 
 export class JsonDatabase {
