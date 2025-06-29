@@ -46,6 +46,10 @@ app.delete('/carts/product/:id', async (req, res) => {
   await cartController.removeFromCart(req, res);
 });
 
+app.post('/carts/checkout', async (req, res) => {
+  await cartController.checkout(req, res);
+});
+
 // Review
 app.post('/reviews', async (req, res) => {
   await reviewController.addReview(req, res);

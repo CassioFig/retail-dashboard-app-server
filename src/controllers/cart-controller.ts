@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import cuid from 'cuid';
-import { Cart, CartItem, Product } from '../models';
+import { Cart, CartItem, Order, Product } from '../models';
 import { database, DatabaseCollections } from '../database';
 
 class CartController {
@@ -142,6 +142,48 @@ class CartController {
 			res.status(200).json(cart);
 		} catch (error) {
 			console.error('Error removing from cart:', error);
+			res.status(500).json({ message: 'Internal server error' });
+		}
+	}
+
+	async checkout(req: Request, res: Response) {
+		try {
+			const userId = req.headers['user-id'] as string;
+			if (!userId) {
+				return res.status(401).json({ message: 'Unauthorized: User ID is required' });
+			}
+
+			let cart = (await database.findBy<Cart>(DatabaseCollections.CART, cart => cart.userId === userId))[0];
+			if (!cart) {
+				return res.status(404).json({ message: 'Cart not found' });
+			}
+
+			if (cart.totalItemCount === 0) {
+				return res.status(400).json({ message: 'Cart is empty' });
+			}
+
+			const newOrder: Order = {
+				id: cuid(),
+				userId: cart.userId,
+				items: cart.items.map(item => ({
+					productId: item.productId,
+					quantity: item.quantity,
+					price: item.price
+				})),
+				totalAmount: cart.totalAmount
+			}
+
+			await database.create<Order>(DatabaseCollections.ORDERS, newOrder);
+
+			cart.items = [];
+			cart.totalItemCount = 0;
+			cart.totalAmount = 0;
+
+			await database.update<Cart>(DatabaseCollections.CART, cart.id, cart);
+
+			res.status(200).json({ message: 'Payment successful', cart });
+		} catch (error) {
+			console.error('Error processing payment:', error);
 			res.status(500).json({ message: 'Internal server error' });
 		}
 	}
