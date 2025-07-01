@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { User } from './models';
-import { cartController, productController, reviewController, userController } from './controllers';
+import { cartController, ordersController, productController, reviewController, userController } from './controllers';
 import { seedDatabase } from './database/seed';
 
 const app = express();
@@ -33,6 +33,10 @@ app.get('/products', async (req, res) => {
   await productController.getProducts(req, res);
 });
 
+app.post('/admin/products', async (req, res) => {
+  await productController.addProductToStock(req, res);
+})
+
 // Cart
 app.post('/carts', async (req, res) => {
   await cartController.addToCart(req, res);
@@ -57,6 +61,11 @@ app.post('/reviews', async (req, res) => {
 
 app.get('/reviews/product/:productId', async (req, res) => {
   await reviewController.getReviewsByProduct(req, res);
+});
+
+// Orders
+app.get('/admin/orders', async (req, res) => {
+  await ordersController.getItemsSoldByProduct(req, res);
 });
 
 async function startServer() {

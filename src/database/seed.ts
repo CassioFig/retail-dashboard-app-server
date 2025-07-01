@@ -49,7 +49,7 @@ export async function seedDatabase(): Promise<void> {
 				average: getAverage(),
 				count: getCount(),
 			},
-			stock: 120,
+			stock: 4,
 		},
 		{
 			id: cuid(),
@@ -61,7 +61,7 @@ export async function seedDatabase(): Promise<void> {
 				average: getAverage(),
 				count: getCount(),
 			},
-			stock: 75,
+			stock: 25,
 		},
 		{
 			id: cuid(),
@@ -73,7 +73,7 @@ export async function seedDatabase(): Promise<void> {
 				average: getAverage(),
 				count: getCount(),
 			},
-			stock: 60,
+			stock: 15,
 		},
 		{
 			id: cuid(),
@@ -85,7 +85,7 @@ export async function seedDatabase(): Promise<void> {
 				average: getAverage(),
 				count: getCount(),
 			},
-			stock: 90,
+			stock: 20,
 		},
 		{
 			id: cuid(),
@@ -97,7 +97,7 @@ export async function seedDatabase(): Promise<void> {
 				average: getAverage(),
 				count: getCount(),
 			},
-			stock: 45,
+			stock: 30,
 		},
 		{
 			id: cuid(),
@@ -109,7 +109,7 @@ export async function seedDatabase(): Promise<void> {
 				average: getAverage(),
 				count: getCount(),
 			},
-			stock: 55,
+			stock: 40,
 		},
 		{
 			id: cuid(),
